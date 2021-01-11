@@ -3,7 +3,6 @@
   (:require [clojure.core.logic.pldb :refer [db db-rel empty-db with-db]]
             [clojure.core.logic :as logic :refer [run* fresh !=]]))
 
-; todo: LotR data? 
 (db-rel parent p c) 
 (db-rel male p)
 (db-rel female p)
