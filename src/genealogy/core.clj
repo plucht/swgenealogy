@@ -42,6 +42,12 @@
     (parent x y)
     (female x)))
 
+(defn offspringof [q f m] 
+  (fresh [] 
+    (parent f q)
+    (parent m q)
+    (!= f m)))
+
 (defn sister [x y] 
   (fresh [p] 
     (parent p x)
@@ -115,4 +121,10 @@
   ; todo
   (println "is :shmi a predecessor of :leia?")
   (println (is-predecessor-of facts :shmi :leia))
+
+  (println "Show offspring of :anakin and :padme.")
+  (println (whois offspringof :anakin :padme))
+
+  (println "Show offsping of :anakin and :shmi.")
+  (println (whois offspringof :anakin :shmi)) ; let's hope this is empty
 )
