@@ -26,6 +26,13 @@
   ([f p1 p2] 
     (with-db facts (run* [q] (f q p1 p2)))))
 
+(defn rawis [p1 predicate p2] 
+  (some? 
+    (some #{p1} (whois predicate p2))))
+
+(defn is [p1 predicate p2]
+  (if rawis "Yes" "No"))
+
 (defn parentof [q person] 
   (parent q person))
 
@@ -69,21 +76,12 @@
          (parent x z)
          (parent z y)))
 
-(defn predecessor [x z] 
+(defn predecessorof [x z] 
   (logic/conde 
     [(parent x z)]
     [(fresh [y]
       (parent x y)
-      (predecessor y z))]))
-
-(defn predecessor-of [db person] 
-  (with-db db 
-    (run* [q]
-      (predecessor q person))))
-
-(defn is-predecessor-of [db predecessor person] 
-  (some? 
-    (some #{predecessor} (predecessor-of db person))))
+      (predecessorof y z))]))
 
 (defn -main [& args]
   (println "Who are the parents of :luke?")
@@ -111,16 +109,17 @@
 
   (println "Who is the grandparent of :leia?")
   (println (whois grandparent :leia))
+  (println "Is :shmi a grandparent of :luke?")
+  (println (is :shmi grandparent :luke))
 
   (println "Who is the predecessor of :leia?")
-  (println (whois predecessor :leia))
+  (println (whois predecessorof :leia))
 
   (println "Who is the sister of :leia?")
   (println (whois sister :leia))
 
-  ; todo
   (println "is :shmi a predecessor of :leia?")
-  (println (is-predecessor-of facts :shmi :leia))
+  (println (is :shmi predecessorof :leia))
 
   (println "Show offspring of :anakin and :padme.")
   (println (whois offspringof :anakin :padme))
