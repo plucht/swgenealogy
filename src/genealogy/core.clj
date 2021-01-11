@@ -1,6 +1,6 @@
 (ns genealogy.core
   (:gen-class)
-  (:require [clojure.core.logic.pldb :refer [db-facts db-rel empty-db with-db]]
+  (:require [clojure.core.logic.pldb :refer [db db-rel empty-db with-db]]
             [clojure.core.logic :as logic :refer [run* fresh !=]]))
 
 ; todo: global database
@@ -10,7 +10,7 @@
 (db-rel male p)
 (db-rel female p)
 
-(def facts (db-facts empty-db 
+(def facts (db
   [parent :shmi :anakin]
   [parent :anakin :luke]
   [parent :padme :luke]
