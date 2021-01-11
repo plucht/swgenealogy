@@ -20,9 +20,11 @@
   [female :padme]
   [female :leia]))
 
-(defn whois [f person] 
-  (with-db facts
-    (run* [q] (f q person))))
+(defn whois 
+  ([f p1] 
+    (with-db facts (run* [q] (f q p1))))
+  ([f p1 p2] 
+    (with-db facts (run* [q] (f q p1 p2)))))
 
 (defn parentof [q person] 
   (parent q person))
