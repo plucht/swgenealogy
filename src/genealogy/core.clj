@@ -1,32 +1,16 @@
 (ns genealogy.core
   (:gen-class)
-  (:require [clojure.core.logic.pldb :as pldb]
-            [clojure.core.logic :as logic]))
+  (:require [clojure.core.logic.pldb :refer [db-facts db-rel empty-db with-db]]
+            [clojure.core.logic :as logic :refer [run* fresh !=]]))
 
-
-(pldb/db-rel parent p c) 
-(pldb/db-rel male p)
-(pldb/db-rel female p)
-
-; todo: import functions into namespace (get rid of ns prefix)
 ; todo: global database
 ; todo: higher order functions
 ; todo: LotR data? 
+(db-rel parent p c) 
+(db-rel male p)
+(db-rel female p)
 
-;; (def facts (apply pldb/db-facts pldb/empty-db 
-;;   ; (macroexpand '(ed (:anakin :padme (:luke :leia))))
-;;   (eded '(:anakin :padme (:luke :leia)))
-;; 
-;;   ; [
-;;   ;   [parent :shmi :anakin]
-;;   ;   [parent :anakin :luke]
-;;   ;   [parent :padme :luke]
-;;   ;   [parent :anakin :leia]
-;;   ;   [parent :padme :leia]
-;;   ; ]
-;;   ))
-
-(def facts (pldb/db-facts pldb/empty-db 
+(def facts (db-facts empty-db 
   [parent :shmi :anakin]
   [parent :anakin :luke]
   [parent :padme :luke]
@@ -39,79 +23,79 @@
   [female :leia]))
 
 (defn parents-of [db person] 
-  (pldb/with-db db 
-    (logic/run* [q] (parent q person))))
+  (with-db db 
+    (run* [q] (parent q person))))
 
 (defn children-of [db person] 
-  (pldb/with-db db
-    (logic/run* [q] (parent person q))))
+  (with-db db
+    (run* [q] (parent person q))))
 
 (defn father [x y] 
-  (logic/fresh [] 
+  (fresh [] 
     (parent x y)
     (male x)))
 
 (defn father-of [db person]
-  (pldb/with-db db 
-    (logic/run* [q] 
+  (with-db db 
+    (run* [q] 
       (father q person))))
 
 (defn mother [x y] 
-  (logic/fresh [] 
+  (fresh [] 
     (parent x y)
     (female x)))
 
 (defn mother-of [db person]
-  (pldb/with-db db 
-    (logic/run* [q] 
+  (with-db db 
+    (run* [q] 
       (mother q person))))
 
 (defn sister [x y] 
-  (logic/fresh [p] 
+  (fresh [p] 
     (parent p x)
     (parent p y)
     (female p) ; hotfix: only use children of mother -> remove duplicated children
     (female x)
-    (logic/!= x y)))
+    (!= x y)))
 
 (defn sister-of [db person]
-  (pldb/with-db db 
-    (logic/run* [q] 
+  (with-db db 
+    (run* [q] 
       (sister q person))))
 
 (defn brother [x y] 
-  (logic/fresh [p]
+  (fresh [p]
     (parent p x)
     (parent p y)
     (female p) ; hotfix: only use children of mother -> remove duplicated children
     (male x)
-    (logic/!= x y)))
+    (!= x y)))
 
 (defn brother-of [db person] 
-  (pldb/with-db db 
-    (logic/run* [q] 
+  (with-db db 
+    (run* [q] 
       (brother q person))))
 
 (defn grandparent [x y]
-  (logic/fresh [z]
+  (fresh [z]
          (parent x z)
          (parent z y)))
 
 (defn grandparent-of [db person] 
-  (pldb/with-db db 
-    (logic/run* [q] 
+  (with-db db 
+    (run* [q] 
       (grandparent q person))))
 
 (defn predecessor [x z] 
   (logic/conde 
     [(parent x z)]
-    [(logic/fresh [y]
+    [(fresh [y]
       (parent x y)
       (predecessor y z))]))
 
 (defn predecessor-of [db person] 
-  (pldb/with-db db 
-    (logic/run* [q]
+  (with-db db 
+    (run* [q]
       (predecessor q person))))
 
 (defn is-predecessor-of [db predecessor person] 
