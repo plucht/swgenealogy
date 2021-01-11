@@ -39,12 +39,12 @@
 (defn childof [q person] 
   (parent person q))
 
-(defn father [x y] 
+(defn fatherof [x y] 
   (fresh [] 
     (parent x y)
     (male x)))
 
-(defn mother [x y] 
+(defn motherof [x y] 
   (fresh [] 
     (parent x y)
     (female x)))
@@ -55,7 +55,7 @@
     (parent m q)
     (!= f m)))
 
-(defn sister [x y] 
+(defn sisterof [x y] 
   (fresh [p] 
     (parent p x)
     (parent p y)
@@ -63,7 +63,7 @@
     (female x)
     (!= x y)))
 
-(defn brother [x y] 
+(defn brotherof [x y] 
   (fresh [p]
     (parent p x)
     (parent p y)
@@ -71,7 +71,7 @@
     (male x)
     (!= x y)))
 
-(defn grandparent [x y]
+(defn grandparentof [x y]
   (fresh [z]
          (parent x z)
          (parent z y)))
@@ -91,32 +91,32 @@
   (println (whois childof :anakin))
   
   (println "Who is the mother of :luke?")
-  (println (whois mother :luke))
+  (println (whois motherof :luke))
 
   (println "Who is the mother of :anakin?")
-  (println (whois mother :anakin))
+  (println (whois motherof :anakin))
   
   (println "Who is the father of :luke?")
-  (println (whois father :luke))
+  (println (whois fatherof :luke))
   (println "Who is the father of :anakin?")
-  (println (whois father :anakin))
+  (println (whois fatherof :anakin))
   
   (println "Who is the sister of :luke?")
-  (println (whois sister :luke))
+  (println (whois sisterof :luke))
   
   (println "Who is the brother of :leia?")
-  (println (whois brother :leia))
+  (println (whois brotherof :leia))
 
   (println "Who is the grandparent of :leia?")
-  (println (whois grandparent :leia))
+  (println (whois grandparentof :leia))
   (println "Is :shmi a grandparent of :luke?")
-  (println (is :shmi grandparent :luke))
+  (println (is :shmi grandparentof :luke))
 
   (println "Who is the predecessor of :leia?")
   (println (whois predecessorof :leia))
 
   (println "Who is the sister of :leia?")
-  (println (whois sister :leia))
+  (println (whois sisterof :leia))
 
   (println "is :shmi a predecessor of :leia?")
   (println (is :shmi predecessorof :leia))
