@@ -3,8 +3,6 @@
   (:require [clojure.core.logic.pldb :refer [db db-rel empty-db with-db]]
             [clojure.core.logic :as logic :refer [run* fresh !=]]))
 
-; todo: global database
-; todo: higher order functions
 ; todo: LotR data? 
 (db-rel parent p c) 
 (db-rel male p)
@@ -22,33 +20,25 @@
   [female :padme]
   [female :leia]))
 
-(defn parents-of [db person] 
-  (with-db db 
-    (run* [q] (parent q person))))
+(defn whois [f person] 
+  (with-db facts
+    (run* [q] (f q person))))
 
-(defn children-of [db person] 
-  (with-db db
-    (run* [q] (parent person q))))
+(defn parentof [q person] 
+  (parent q person))
+
+(defn childof [q person] 
+  (parent person q))
 
 (defn father [x y] 
   (fresh [] 
     (parent x y)
     (male x)))
 
-(defn father-of [db person]
-  (with-db db 
-    (run* [q] 
-      (father q person))))
-
 (defn mother [x y] 
   (fresh [] 
     (parent x y)
     (female x)))
-
-(defn mother-of [db person]
-  (with-db db 
-    (run* [q] 
-      (mother q person))))
 
 (defn sister [x y] 
   (fresh [p] 
@@ -58,11 +48,6 @@
     (female x)
     (!= x y)))
 
-(defn sister-of [db person]
-  (with-db db 
-    (run* [q] 
-      (sister q person))))
-
 (defn brother [x y] 
   (fresh [p]
     (parent p x)
@@ -71,20 +56,10 @@
     (male x)
     (!= x y)))
 
-(defn brother-of [db person] 
-  (with-db db 
-    (run* [q] 
-      (brother q person))))
-
 (defn grandparent [x y]
   (fresh [z]
          (parent x z)
          (parent z y)))
-
-(defn grandparent-of [db person] 
-  (with-db db 
-    (run* [q] 
-      (grandparent q person))))
 
 (defn predecessor [x z] 
   (logic/conde 
@@ -104,29 +79,38 @@
 
 (defn -main [& args]
   (println "Who are the parents of :luke?")
-  (println (parents-of facts :luke))
+  (println (whois parentof :luke))
+  
   (println "Who are the children of :anakin?")
-  (println (children-of facts :anakin))
-  (println "Who are the children of :padme?")
-  (println (children-of facts :padme))
+  (println (whois childof :anakin))
+  
   (println "Who is the mother of :luke?")
-  (println (mother-of facts :luke))
+  (println (whois mother :luke))
+
   (println "Who is the mother of :anakin?")
-  (println (mother-of facts :anakin))
+  (println (whois mother :anakin))
+  
   (println "Who is the father of :luke?")
-  (println (father-of facts :luke))
+  (println (whois father :luke))
   (println "Who is the father of :anakin?")
-  (println (father-of facts :anakin))
+  (println (whois father :anakin))
+  
   (println "Who is the sister of :luke?")
-  (println (sister-of facts :luke))
+  (println (whois sister :luke))
+  
   (println "Who is the brother of :leia?")
-  (println (brother-of facts :leia))
+  (println (whois brother :leia))
+
   (println "Who is the grandparent of :leia?")
-  (println (grandparent-of facts :leia))
+  (println (whois grandparent :leia))
+
   (println "Who is the predecessor of :leia?")
-  (println (predecessor-of facts :leia))
+  (println (whois predecessor :leia))
+
+  (println "Who is the sister of :leia?")
+  (println (whois sister :leia))
+
+  ; todo
   (println "is :shmi a predecessor of :leia?")
   (println (is-predecessor-of facts :shmi :leia))
-  (println "Who is the sister of :leia?")
-  (println (sister-of facts :leia))
 )
