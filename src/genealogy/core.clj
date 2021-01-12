@@ -54,21 +54,19 @@
     (parent m q)
     (!= f m)))
 
-(defn sisterof [x y] 
-  (fresh [p] 
-    (parent p x)
-    (parent p y)
-    (female p) ; hotfix: only use children of mother -> remove duplicated children
-    (female x)
-    (!= x y)))
+(defn sisterof [q y] 
+  (fresh [m] 
+    (female q)
+    (motherof m y)
+    (motherof m q)
+    (!= q y)))
 
-(defn brotherof [x y] 
-  (fresh [p]
-    (parent p x)
-    (parent p y)
-    (female p) ; hotfix: only use children of mother -> remove duplicated children
-    (male x)
-    (!= x y)))
+(defn brotherof [q y]  
+  (fresh [m]
+    (male q)
+    (motherof m y)
+    (motherof m q)
+    (!= q y)))
 
 (defn grandparentof [gp x]
   (fresh [p]
