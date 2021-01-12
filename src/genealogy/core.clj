@@ -20,67 +20,67 @@
   [female :leia]))
 
 (defn whois 
-  ([f p1] 
-    (with-db facts (run* [q] (f q p1))))
-  ([f p1 p2] 
-    (with-db facts (run* [q] (f q p1 p2)))))
+  ([relation x] 
+    (with-db facts (run* [q] (relation q x))))
+  ([relation x y] 
+    (with-db facts (run* [q] (relation q x y)))))
 
-(defn rawis [p1 predicate p2] 
+(defn rawis [x relation y] 
   (some? 
-    (some #{p1} (whois predicate p2))))
+    (some #{x} (whois relation y))))
 
-(defn is [p1 predicate p2]
-  (if (rawis p1 predicate p2) "Yes" "No"))
+(defn is [x relation y]
+  (if (rawis x relation y) "Yes" "No"))
 
-(defn parentof [q person] 
-  (parent q person))
+(defn parentof [q x] 
+  (parent q x))
 
-(defn childof [q person] 
-  (parent person q))
+(defn childof [q x] 
+  (parent x q))
 
-(defn fatherof [x y] 
+(defn fatherof [q x] 
   (fresh [] 
-    (parent x y)
-    (male x)))
+    (parent q x)
+    (male q)))
 
-(defn motherof [x y] 
+(defn motherof [q x] 
   (fresh [] 
-    (parent x y)
-    (female x)))
+    (parent q x)
+    (female q)))
 
-(defn offspringof [q f m] 
+(defn offspringof [q x y] 
   (fresh [] 
-    (parent f q)
-    (parent m q)
-    (!= f m)))
+    (parent x q)
+    (parent y q)
+    (!= x y)))
 
-(defn sisterof [q y] 
+(defn sisterof [q x] 
   (fresh [m] 
     (female q)
-    (motherof m y)
+    (motherof m x)
     (motherof m q)
-    (!= q y)))
+    (!= q x)))
 
-(defn brotherof [q y]  
+(defn brotherof [q x]  
   (fresh [m]
     (male q)
-    (motherof m y)
+    (motherof m x)
     (motherof m q)
-    (!= q y)))
+    (!= q x)))
 
-(defn grandparentof [gp x]
+(defn grandparentof [q x]
   (fresh [p]
     (parent p x)
-    (parent gp p)))
+    (parent q p)))
 
-(defn predecessorof [x z] 
+(defn predecessorof [q x] 
   (conde 
-    [(parent x z)]
+    [(parent q x)]
     [(fresh [y]
-      (parent x y)
-      (predecessorof y z))]))
+      (parent q y)
+      (predecessorof y x))]))
 
-(defn what-relationship [x y] 
+(defn what-relationship [q x] 
   (let [rel [parentof 
              childof
              fatherof
@@ -92,7 +92,7 @@
   (map #(second (re-find #"\$([^\@]+)\@" %)) ; find name of relationship
     (filter some? 
       (for [r rel] 
-        (if (rawis x r y) (str r) nil))))))
+        (if (rawis q r x) (str r) nil))))))
 
 (defn -main [& args]
   (println "Who are the parents of :luke?")
