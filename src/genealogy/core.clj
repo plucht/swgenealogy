@@ -1,7 +1,7 @@
 (ns genealogy.core
   (:gen-class)
   (:require [clojure.core.logic.pldb :refer [db db-rel empty-db with-db]]
-            [clojure.core.logic :as logic :refer [run* fresh !=]]))
+            [clojure.core.logic :refer [conde run* fresh !=]]))
 
 (db-rel parent p c) 
 (db-rel male p)
@@ -76,7 +76,7 @@
          (parent z y)))
 
 (defn predecessorof [x z] 
-  (logic/conde 
+  (conde 
     [(parent x z)]
     [(fresh [y]
       (parent x y)
