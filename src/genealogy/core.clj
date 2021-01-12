@@ -70,10 +70,10 @@
     (male x)
     (!= x y)))
 
-(defn grandparentof [x y]
-  (fresh [z]
-         (parent x z)
-         (parent z y)))
+(defn grandparentof [gp x]
+  (fresh [p]
+    (parent p x)
+    (parent gp p)))
 
 (defn predecessorof [x z] 
   (conde 
@@ -119,6 +119,9 @@
 
   (println "is :shmi a predecessor of :leia?")
   (println (is :shmi predecessorof :leia))
+
+  (println "is :padme a grandparent of :leia?")
+  (println (is :padme grandparentof :leia))
 
   (println "Show offspring of :anakin and :padme.")
   (println (whois offspringof :anakin :padme))
