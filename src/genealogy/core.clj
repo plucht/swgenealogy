@@ -30,7 +30,7 @@
     (some #{p1} (whois predicate p2))))
 
 (defn is [p1 predicate p2]
-  (if rawis "Yes" "No"))
+  (if (rawis p1 predicate p2) "Yes" "No"))
 
 (defn parentof [q person] 
   (parent q person))
