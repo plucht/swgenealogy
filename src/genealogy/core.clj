@@ -82,6 +82,20 @@
       (parent x y)
       (predecessorof y z))]))
 
+(defn what-relationship [x y] 
+  (let [rel [parentof 
+             childof
+             fatherof
+             motherof
+             sisterof 
+             brotherof 
+             grandparentof 
+             predecessorof]]
+  (map #(second (re-find #"\$([^\@]+)\@" %)) ; find name of relationship
+    (filter some? 
+      (for [r rel] 
+        (if (rawis x r y) (str r) nil))))))
+
 (defn -main [& args]
   (println "Who are the parents of :luke?")
   (println (whois parentof :luke))
@@ -117,11 +131,13 @@
   (println "Who is the sister of :leia?")
   (println (whois sisterof :leia))
 
-  (println "is :shmi a predecessor of :leia?")
+  (println "Is :shmi a predecessor of :leia?")
   (println (is :shmi predecessorof :leia))
 
-  (println "is :padme a grandparent of :leia?")
+  (println "Is :padme a grandparent of :leia?")
   (println (is :padme grandparentof :leia))
+  (println "How is :padme related to :leia?")
+  (println (what-relationship :padme :leia))
 
   (println "Show offspring of :anakin and :padme.")
   (println (whois offspringof :anakin :padme))

@@ -28,8 +28,12 @@ Who is the predecessor of :leia?
 (:padme :anakin :shmi)
 Who is the sister of :leia?
 ()
-is :shmi a predecessor of :leia?
+Is :shmi a predecessor of :leia?
 Yes
+Is :padme a grandparent of :leia?
+No
+How is :padme related to :leia?
+(parentof motherof predecessorof)
 Show offspring of :anakin and :padme.
 (:luke :leia)
 Show offsping of :anakin and :shmi.
